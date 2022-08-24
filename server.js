@@ -22,7 +22,7 @@ const theOptions = () => {
         // calls specific functions
         switch (chooseOption) {
             // call cases call a specific function to deal with it
-            case "View All Employess":
+            case "View All Employees":
                 showEmployees();
                 break;
             case "View All Roles":
@@ -83,6 +83,16 @@ const addEmployee = () => {
             console.log(`Added ${params[0]} ${params[1]} to the database.`)
         })
     })
+}
+
+const showEmployees = () => {
+    // query
+    const sql = `SELECT * FROM employees`;
+
+    db.query(sql, (err, results) => {
+        console.table(results);
+        theOptions()
+    });
 }
 
 const listRoles = () => {
