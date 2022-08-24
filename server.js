@@ -2,24 +2,11 @@ const express = require("express");
 const db = require("./db/connection");
 const inquirer = require("inquirer");
 
-const PORT = 3001 || process.env.PORT;
-const app = express()
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json())
-
-app.use((req, res) => {
-    res.status(400).end();
-})
-
 // connect to database
 db.connect((err) => {
     if (err) throw err;
     console.log("Database connected")
-    app.listen(PORT, () => {
-        console.log(`Server listening on port ${PORT}`)
-    })
-})
+});
 
 const theOptions = () => {
     inquirer.prompt([
@@ -60,8 +47,72 @@ const theOptions = () => {
                 process.exit()
         }
     })
-        // set up switch statement  
+}
+
+// add employee function
+const addEmployee = () => {
+    // prompt user for employee first name, last name, role, and manager
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "first_name",
+            message: "What is the employee's first name?"
+        },
+        {
+            type: "input",
+            name: "last_name",
+            message: "What is the employee's last name?"
+        },
+        {
+            type: "list",
+            name: "role",
+            message: "What is the employee's role?",
+            choices: listRoles()
+        },
+        {
+            type: "list",
+            name: "manager",
+            message: "Who is the employee's manager?",
+            choices: listManagers()
+        }
+    ]).then((data) => {
+        const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
+        const params = [data.first_name, data.last_name, null, null]
+            
+        db.query(sql, params, (err, result) => {
+            console.log(`Added ${params[0]} ${params[1]} to the database.`)
+        })
+    })
+}
+
+const listRoles = () => {
+    // query definition
+    const sql = `SELECT * FROM roles`;
+
+    const titles = [];
     
+    db.query(sql, (err, results) => {
+        // maps only for role title
+        results.map(({ title }) => {
+            titles.push(title)
+        })
+    })
+    return titles;
+}
+
+const listManagers = () => {
+    // query definition
+    const sql = `SELECT * FROM employees`;
+
+    const managers = [];
+
+    db.query(sql, (err, results) => {
+        // maps for employee name
+        results.map(({ first_name, last_name }) => {
+            managers.push(`${first_name} ${last_name}`);
+        })
+    })
+    return managers;
 }
 
 theOptions()
