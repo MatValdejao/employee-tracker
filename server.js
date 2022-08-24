@@ -105,6 +105,16 @@ const showRoles = () => {
     });
 }
 
+const showDepartments = () => {
+    // query 
+    const sql = `SELECT * FROM departments`;
+
+    db.query(sql, (err, results) => {
+        console.table(results);
+        theOptions()
+    })
+}
+
 const listRoles = () => {
     // query definition
     const sql = `SELECT * FROM roles`;
