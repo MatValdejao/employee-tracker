@@ -173,7 +173,7 @@ const addEmployee = () => {
 
 const showEmployees = () => {
 	// query definition
-	const sql = `SELECT employees.id, employees.first_name, employees.last_name, roles.title AS title, departments.name AS department, roles.salary AS salary FROM employees LEFT JOIN roles ON employees.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id`;
+	const sql = `SELECT employees.id, employees.first_name, employees.last_name, roles.title AS title, departments.name AS department, roles.salary AS salary, CONCAT(manager.first_name, manager.last_name) AS manager FROM Employees employees LEFT JOIN roles ON employees.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id LEFT JOIN Employees manager ON employees.manager_id = manager.id`;
 
 	db.query(sql, (err, results) => {
 		console.table(results);
@@ -235,3 +235,5 @@ const listManagers = () => {
 
 
 theOptions()
+
+`SELECT employees.id, CONCAT(manager.first_name, manager.last_name) AS manager FROM Employees employees LEFT JOIN Employees manager ON employees.manager_id = manager.id`;
