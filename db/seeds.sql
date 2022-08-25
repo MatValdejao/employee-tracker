@@ -18,4 +18,5 @@ VALUES
   ('Virginia', "A", 1, 1),
   ('Piers', "B", 3, NULL),
   ('Charles', "G", 2, 2),
-  ('Katherine', "L", 1, 1);
+  ('Katherine', "L", 1, 1),
+  ('Kate', "L", 1, 1);
