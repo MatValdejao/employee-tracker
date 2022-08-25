@@ -2,21 +2,23 @@ INSERT INTO departments (name)
 VALUES
   ('HR'),
   ('Tech'),
-  ('Service');
+  ('Research'),
+  ('Clinical Trials');
 
 INSERT INTO roles (title, salary, department_id)
 VALUES
-  ('Ronald', 80000, 1),
-  ('Virginia', 70000, 1),
-  ('Piers', 100000, 2),
-  ('Charles', 200000, 2),
-  ('Katherine', 50000, 1);
+  ('Research Assistant', 80000, 2),
+  ('HR Manager', 90000, 1),
+  ('HR Rep', 60000, 1),
+  ('Software Engineer', 200000, 2),
+  ('Lead Software Engineer', 250000, 2),
+  ('Clinal Lead', 100000, 4);
 
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
-  ('Ronald', "H", 1, NULL),
-  ('Virginia', "A", 1, 1),
-  ('Piers', "B", 3, NULL),
-  ('Charles', "G", 2, 2),
-  ('Katherine', "L", 1, 1),
-  ('Kate', "L", 1, 1);
+  ('Ronald', "Hatch", 1, NULL),
+  ('Virginia', "Alber", 1, NULL),
+  ('Piers', "Cray", 2, NULL),
+  ('Charles', "Darwin", 3, 3),
+  ('Katherine', "Lit", 5, NULL),
+  ('Kate', "Lour", 4, 5);

@@ -1,7 +1,7 @@
 const express = require("express");
 const db = require("./db/connection");
 const inquirer = require("inquirer");
-require("console.table")
+require("console.table");
 
 // connect to database
 db.connect((err) => {
@@ -63,50 +63,53 @@ const theOptions = () => {
 
 // add role function
 const addRole = () => {
-
-    // query definition
+	// query definition
 	const sql = `SELECT * FROM departments`;
 
-    // query to display department options
-    db.query(sql, (err, results) => {
-			// maps only for role title
-			const departments = results.map(({ name, id }) => {
-				return {
-					name: name,
-					value: id,
-				};
-			});
-			// inquire role title, salary, department_id
-			inquirer
-				.prompt([
-					{
-						type: "input",
-						name: "title",
-						message: "What is the name of the role?",
-					},
-					{
-						type: "input",
-						name: "salary",
-						message: "What is the salary of the role?",
-					},
-					{
-						type: "list",
-						name: "department_id",
-						message: "What department does the role belong to?",
-						choices: departments,
-					},
-				])
-				.then(({ title, salary, department_id }) => {
-					const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`;
-					// what to add to table
-					const params = [title, salary, department_id];
-
-					// run query as promise to await 
-					db.promise().query(sql, params, (err, result) => {
-						console.log(`Added ${params[0]} to the database`);
-					}).then(theOptions());
-				});
+	// query to display department options
+	db.query(sql, (err, results) => {
+		// maps only for role title
+		const departments = results.map(({ name, id }) => {
+			return {
+				name: name,
+				value: id,
+			};
 		});
+		// inquire role title, salary, department_id
+		inquirer
+			.prompt([
+				{
+					type: "input",
+					name: "title",
+					message: "What is the name of the role?",
+				},
+				{
+					type: "input",
+					name: "salary",
+					message: "What is the salary of the role?",
+				},
+				{
+					type: "list",
+					name: "department_id",
+					message: "What department does the role belong to?",
+					choices: departments,
+				},
+			])
+			.then(({ title, salary, department_id }) => {
+				const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`;
+				// what to add to table
+				const params = [title, salary, department_id];
+
+				// run query as promise to await
+				db.promise()
+					.query(sql, params, (err, result) => {
+					})
+					.then(() => {
+						console.log(`Added ${params[0]} to the database`);
+						theOptions()
+					});
+			});
+	});
 };
 
 // add department function
@@ -123,88 +126,101 @@ const addDepartment = () => {
 		.then((data) => {
 			const sql = `INSERT INTO departments (name) VALUES (?)`;
 			// what to add to table
-            const params = [data.name];
+			const params = [data.name];
 
 			// run query as promise to await
-			db.promise().query(sql, params, (err, result) => {
-				console.log(`Added ${params[0]} to the database`);
-			}).then(theOptions());;
-		})
+			db.promise()
+				.query(sql, params, (err, result) => {
+				})
+				.then(() => {
+					console.log(`Added ${params[0]} to the database`);
+					theOptions()
+				});
+		});
 };
 
 // add employee function
 const addEmployee = () => {
-    // sql query to find roles and manager options
-    let sql = `SELECT roles.title, roles.id AS role_id FROM roles`
+	// sql query to find roles and manager options
+	let sql = `SELECT roles.title, roles.id AS role_id FROM roles`;
 
-    // run query
-    db.query(sql, (err, results) => {
-        // roles array
-        const roles = results.map(({ title, role_id }) => {
-            return {
-                name: title,
-                value: role_id
-            }
-        })
-        // changing query
-        sql = `SELECT CONCAT(employees.first_name, " ", employees.last_name) AS manager, employees.id AS employee_id FROM employees`
-        // second query
-        db.query(sql, (err, results) => {
-            // managers array
-            const managers = results.map(({ manager, employee_id }) => {
-                return {
-                    name: manager,
-                    value: employee_id
-                }
-            });
+	// run query
+	db.query(sql, (err, results) => {
+		// roles array
+		const roles = results.map(({ title, role_id }) => {
+			return {
+				name: title,
+				value: role_id,
+			};
+		});
+		// changing query
+		sql = `SELECT CONCAT(employees.first_name, " ", employees.last_name) AS manager, employees.id AS employee_id FROM employees`;
+		// second query
+		db.query(sql, (err, results) => {
+			// managers array
+			const managers = results.map(({ manager, employee_id }) => {
+				return {
+					name: manager,
+					value: employee_id,
+				};
+			});
 
-            // add option not to add manager
-            managers.push("None")
+			// add option not to add manager
+			managers.push("None");
 
-            // prompt user for employee first name, last name, role, and manager
-            inquirer
-                .prompt([
-                    {
-                        type: "input",
-                        name: "first_name",
-                        message: "What is the employee's first name?",
-                    },
-                    {
-                        type: "input",
-                        name: "last_name",
-                        message: "What is the employee's last name?",
-                    },
-                    {
-                        type: "list",
-                        name: "roleID",
-                        message: "What is the employee's role?",
-                        choices: roles,
-                    },
-                    {
-                        type: "list",
-                        name: "managerID",
-                        message: "Who is the employee's manager?",
-                        choices: managers,
-                    },
-                ])
-                .then((data) => {
-                    const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
+			// prompt user for employee first name, last name, role, and manager
+			inquirer
+				.prompt([
+					{
+						type: "input",
+						name: "first_name",
+						message: "What is the employee's first name?",
+					},
+					{
+						type: "input",
+						name: "last_name",
+						message: "What is the employee's last name?",
+					},
+					{
+						type: "list",
+						name: "roleID",
+						message: "What is the employee's role?",
+						choices: roles,
+					},
+					{
+						type: "list",
+						name: "managerID",
+						message: "Who is the employee's manager?",
+						choices: managers,
+					},
+				])
+				.then((data) => {
+					const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
 
-                    // check whether answer was none
-                    if (data.managerID === "None") {
-                        data.managerID = null
-                    }
+					// check whether answer was none
+					if (data.managerID === "None") {
+						data.managerID = null;
+					}
 
-                    // what to add to table
-                    const params = [data.first_name, data.last_name, data.roleID, data.managerID];
+					// what to add to table
+					const params = [
+						data.first_name,
+						data.last_name,
+						data.roleID,
+						data.managerID,
+					];
 
-                    // running query to add to table as promise
-                    db.promise().query(sql, params, (err, result) => {
-                        console.log(`Added ${params[0]} ${params[1]} to the database`);
-                    }).then(theOptions());
-                });
-        });
-    })
+					// running query to add to table as promise
+					db.promise()
+						.query(sql, params, (err, result) => {
+						})
+						.then(() => {
+							console.log(`Added ${params[0]} ${params[1]} to the database`);
+							theOptions()
+						});
+				});
+		});
+	});
 };
 
 const showEmployees = () => {
@@ -237,4 +253,62 @@ const showDepartments = () => {
 	});
 };
 
-theOptions()
+const updateRole = () => {
+	// sql to display all employees
+	let sql = `SELECT employees.id AS employee_id, CONCAT(employees.first_name, " ", employees.last_name) AS name FROM employees`;
+
+	db.query(sql, (err, results) => {
+		const employees = results.map(({ name, employee_id }) => {
+			return {
+				name: name,
+				value: employee_id,
+			};
+		});
+		// new query
+		sql = `SELECT roles.title, roles.id AS role_id FROM roles`;
+
+		// run query
+		db.query(sql, (err, results) => {
+			// roles array
+			const roles = results.map(({ title, role_id }) => {
+				return {
+					name: title,
+					value: role_id,
+				};
+			});
+
+			// inquire user about new employee role
+			inquirer
+				.prompt([
+					{
+						type: "list",
+						name: "employee_id",
+						message: "Which employee would you like to update?",
+						choices: employees,
+					},
+					{
+						type: "list",
+						name: "role_id",
+						message: "What is their new role?",
+						choices: roles,
+					},
+				])
+				.then((data) => {
+					sql = `UPDATE employees SET role_id = ? WHERE employees.id = ?`;
+					// set params to be added in ? spots
+					const params = [data.role_id, data.employee_id];
+
+					// run query to update
+					db.promise()
+						.query(sql, params, (err, results) => { })
+						// ensure waita for proise to resolve
+						.then(() => {
+							console.log("Employee role updated")
+							theOptions()
+						});
+				});
+		});
+	});
+};
+
+theOptions();
