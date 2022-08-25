@@ -1,4 +1,3 @@
-const express = require("express");
 const db = require("./db/connection");
 const inquirer = require("inquirer");
 require("console.table");
@@ -25,6 +24,7 @@ const theOptions = () => {
 					"Add Role",
 					"View All Departments",
 					"Add Department",
+					"Budget",
 					"Quit",
 				],
 			},
@@ -54,6 +54,9 @@ const theOptions = () => {
 					break;
 				case "Add Department":
 					addDepartment();
+					break;
+				case "Budget":
+					showBudget();
 					break;
 				default:
 					process.exit();
@@ -310,5 +313,44 @@ const updateRole = () => {
 		});
 	});
 };
+
+const showBudget = () => {
+	// query to select departments table
+	let sql = `SELECT * FROM departments`
+
+	db.query(sql, (err, results) => {
+		const departments = results.map(({ id, name }) => {
+			return {
+				name: name,
+				value: id
+			}
+		})
+
+		inquirer
+			.prompt([
+				{
+					type: "list",
+					name: "department_id",
+					message: "Which department would you like to view the budget for?",
+					choices: departments,
+				},
+			])
+			.then((data) => {
+				// query to sum sslaries for total budget
+				sql = `SELECT departments.name AS department, SUM(roles.salary) AS budget FROM roles LEFT JOIN departments ON roles.department_id = departments.id WHERE roles.department_id = ?`;
+				// what to insert into ?
+				const params = [data.department_id];
+
+				// run query
+				db.promise().query(sql, params, (err, results) => {
+				}).then((results) => {
+					// log result and run options again
+					console.table(results[0]);
+					theOptions();
+				});
+			})
+	})
+	
+}
 
 theOptions();
