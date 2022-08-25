@@ -158,7 +158,7 @@ const addEmployee = () => {
 
 const showEmployees = () => {
 	// query definition
-	const sql = `SELECT * FROM employees`;
+	const sql = `SELECT employees.first_name, employees.last_name, roles.title AS title, departments.name AS department, roles.salary AS salary FROM employees LEFT JOIN roles ON employees.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id`;
 
 	db.query(sql, (err, results) => {
 		console.table(results);
@@ -232,3 +232,6 @@ const listDepartments = () => {
 };
 
 theOptions();
+
+
+
