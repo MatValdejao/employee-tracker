@@ -62,37 +62,52 @@ const theOptions = () => {
 
 // add role function
 const addRole = () => {
-	// inquire role title, salary, department_id
-	inquirer
-		.prompt([
-			{
-				type: "input",
-				name: "title",
-				message: "What is the name of the role",
-			},
-			{
-				type: "input",
-				name: "salary",
-				message: "What is the salary of the role?",
-			},
-			{
-				type: "list",
-				name: "department",
-				message: "What department does the role belong to?",
-				choices: listDepartments(),
-			},
-		])
-		.then((data) => {
-			const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`;
-			// what to add to table
-			const params = [data.title, data.salary, null];
 
-			// run query
-			db.query(sql, params, (err, result) => {
-				console.log(`Added ${params[0]} to the database`);
+    // query definition
+	const sql = `SELECT * FROM departments`;
+
+    // query to display department options
+    db.query(sql, (err, results) => {
+			// maps only for role title
+			const departments = results.map(({ name, id }) => {
+				return {
+					name: name,
+					id: id,
+				};
 			});
+			// inquire role title, salary, department_id
+			inquirer
+				.prompt([
+					{
+						type: "input",
+						name: "title",
+						message: "What is the name of the role",
+					},
+					{
+						type: "input",
+						name: "salary",
+						message: "What is the salary of the role?",
+					},
+					{
+						type: "list",
+						name: "department_id",
+						message: "What department does the role belong to?",
+						choices: departments,
+					},
+				])
+				.then(({ title, salary, department_id }) => {
+					const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`;
+					// what to add to table
+					const params = [title, salary, department_id];
+
+					// run query
+					db.query(sql, params, (err, result) => {
+						console.log(`Added ${params[0]} to the database`);
+					});
+				});
 		});
 };
+
 // add department function
 const addDepartment = () => {
 	// inquire role title, salary, department_id
@@ -151,7 +166,7 @@ const addEmployee = () => {
 
             // running query to add to table
 			db.query(sql, params, (err, result) => {
-				console.log(`Added ${params[0]} ${params[1]} to the database.`);
+				console.log(`Added ${params[0]} ${params[1]} to the database`);
 			});
 		});
 };
@@ -216,22 +231,7 @@ const listManagers = () => {
 	return managers;
 };
 
-const listDepartments = () => {
-	// query definition
-	const sql = `SELECT * FROM departments`;
-
-	const departments = [];
-
-	db.query(sql, (err, results) => {
-		// maps only for role title
-		results.map(({ name }) => {
-			departments.push(name);
-		});
-	});
-	return departments;
-};
-
-theOptions();
+// const listDepartments = () => {
 
 
-
+theOptions()
