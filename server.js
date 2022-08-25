@@ -268,7 +268,7 @@ const updateRole = () => {
 			};
 		});
 		// new query
-		sql = `SELECT roles.title, roles.id AS role_id FROM roles`;
+		sql = `SELECT roles.id AS role_id, roles.title FROM roles`;
 
 		// run query
 		db.query(sql, (err, results) => {

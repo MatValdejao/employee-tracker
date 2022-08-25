@@ -7,7 +7,7 @@ VALUES
 
 INSERT INTO roles (title, salary, department_id)
 VALUES
-  ('Research Assistant', 80000, 2),
+  ('Research Assistant', 80000, 3),
   ('HR Manager', 90000, 1),
   ('HR Rep', 60000, 1),
   ('Software Engineer', 200000, 2),
