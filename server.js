@@ -93,6 +93,28 @@ const addRole = () => {
 			});
 		});
 };
+// add department function
+const addDepartment = () => {
+	// inquire role title, salary, department_id
+	inquirer
+		.prompt([
+			{
+				type: "input",
+				name: "name",
+				message: "What is the name of the department",
+			},
+		])
+		.then((data) => {
+			const sql = `INSERT INTO roles (name) VALUES ?`;
+			// what to add to table
+			const params = [data.title];
+
+			// run query
+			db.query(sql, params, (err, result) => {
+				console.log(`Added ${params[0]} to the database`);
+			});
+		});
+};
 
 // add employee function
 const addEmployee = () => {
